@@ -1,6 +1,5 @@
 Readme File - Homework #8 
 Bhargav Venkataraman
-6658312887
 
 To Compile the servlet and parser:
 Step 1: cd Tomcat/jakarta-tomcat-4.1.27/webapps/examples/WEB-INF/classes
