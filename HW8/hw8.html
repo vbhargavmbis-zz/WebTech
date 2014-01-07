@@ -1,0 +1,493 @@
+<html>
+<meta charset="UTF-8">
+<head>
+<script type="text/javascript">
+//var doc;
+ 
+function myCode() 
+{
+  //while(req.readyState!=4){}
+ if (req.readyState == 4) 
+ {    // alert("INSIDE!!");
+    if(!req.responseText)
+	{
+	  html="<h1>No Discography found!</h1><h4>for Search Result: \""+title+"\" of type: \""+type+"\"";
+	 // alert(html);
+	}
+	else
+	{
+      doc = eval('(' + req.responseText + ')'); 
+	
+	//alert("done");
+	//document.write(doc);
+	
+   //document.write(req.responseText);
+   if(!doc.results.result[0])
+   {
+     //alert("YO");
+   }
+  
+    if(type=="artists")
+	{
+	  html="<html><head></head><body>";
+	  if(!req.responseText)
+      {
+	    alert("No results");
+       }	  
+	
+	  html+="<table border=2 align=\"center\"><tr><th>Cover</th><th>Name</th><th>Genre(s)</th><th>Year(s)</th><th>Details</th><th>Post to Facebook</th></tr>";
+	  
+	    html+="<div id='fb-root'></div>\n";
+      html+="<script src='http://connect.facebook.net/en_US/all.js'><\/script>\n";
+      html+="<p id='msg'></p>\n";
+	  
+	  html+="<script type=\"text/javascript\">\n";
+	  
+	   html+="window.fbAsyncInit = function() {";
+    // init the FB JS SDK
+   html+=" FB.init({";
+     html+="appId      : '152774338224282',";                        // App ID from the app dashboard
+    //  html+="channelUrl : '//WWW.YOUR_DOMAIN.COM/channel.html',"; // Channel file for x-domain comms
+      html+="status     : true,";                                 // Check Facebook Login status
+      html+="xfbml      : true";                                  // Look for social plugins on the page
+    html+="});";
+
+    // Additional initialization code such as adding Event Listeners goes here
+  html+="};";
+
+  // Load the SDK asynchronously
+  html+="(function(d, s, id){";
+    html+=" var js, fjs = d.getElementsByTagName(s)[0];";
+     html+="if (d.getElementById(id)) {return;}";
+     html+="js = d.createElement(s); js.id = id;";
+     html+="js.src = \"//connect.facebook.net/en_US/all.js\";";
+     html+="fjs.parentNode.insertBefore(js, fjs);";
+   html+="}(document, 'script', 'facebook-jssdk'));";
+   
+   
+	  html+=" FB.init({appId: \"152774338224282\", status: true, cookie: true});\n";  
+      html+="function postToFeed(cover,name,genre,year,details) {\n";
+
+	 // html+="document.write(doc);\n";
+        // calling the API ...
+      html+="var obj = {\n";
+      html+="method: 'feed',\n";
+      html+="redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',\n";
+      html+="link: 'https://developers.facebook.com/docs/reference/dialogs/',\n";
+      html+="picture: cover,\n";
+      html+="name: name,\n";
+      html+="caption: 'I like '+name+' who is active since '+year,\n";
+      html+="description: 'Genre of Music: '+genre,\n";
+	  html+="properties: {'Look at details' :{ text: 'here', href: details}}";
+      html+="};\n";
+
+       html+="function callback(response) {\n";
+       html+="document.getElementById('msg').innerHTML = \"Post ID: \" + response['post_id'];\n";
+        html+="}\n";
+
+        html+="FB.ui(obj, callback);\n";
+      html+="}\n";
+    html+="<\/script>\n";
+	if(!doc.results.result[0])  //if there is only a single line!!
+   {
+        if(doc.results.result.cover=="N/A")
+		{
+		   html+="<tr align=\"center\"><td>N/A</td>";
+		}
+		else
+		{
+          html+="<tr align=\"center\"><td><img src=\""+doc.results.result.cover+"\"></td>";
+		 }
+        
+	    html+="<td>"+doc.results.result.name+"</td>";
+        html+="<td>"+doc.results.result.genre+"</td>";
+        html+="<td>"+doc.results.result.year+"</td>";
+		html+="<td><a href=\""+doc.results.result.details+"\">Details</a></td>";
+		html+="<td><a href onclick='postToFeed(\""+doc.results.result.cover+"\",\""+doc.results.result.name+"\",\""+doc.results.result.genre+"\",\""+doc.results.result.year+"\",\""+doc.results.result.details+"\"); return false;'><img src=\"http://www.wired.com/geekmom/wp-content/uploads/2013/01/facebook_logo.jpg\" height=\"50\" width=\"180\" /></a></td>\n";
+   } 
+   else                          // more than one result!!!
+   {
+	  for(i=0;i<doc.results.result.length;i++)
+	  {
+	    if(doc.results.result[i].cover=="N/A")
+		{
+		   html+="<tr align=\"center\"><td>N/A</td>";
+		}
+		else
+		{
+          html+="<tr align=\"center\"><td><img src=\""+doc.results.result[i].cover+"\"></td>";
+		 }
+        html+="<td>"+doc.results.result[i].name+"</td>";
+        html+="<td>"+doc.results.result[i].genre+"</td>";
+        html+="<td>"+doc.results.result[i].year+"</td>";
+	    html+="<td><a href=\""+doc.results.result[i].details+"\">Details</a></td>";
+	    html+="<td><a href onclick='postToFeed(\""+doc.results.result[i].cover+"\",\""+doc.results.result[i].name+"\",\""+doc.results.result[i].genre+"\",\""+doc.results.result[i].year+"\",\""+doc.results.result[i].details+"\"); return false;'><img src=\"http://www.wired.com/geekmom/wp-content/uploads/2013/01/facebook_logo.jpg\" height=\"50\" width=\"180\" /></a></td>\n";
+	   }
+	 }
+ }
+	else if(type=="albums")
+	{
+	  html="<html><head></head><body><table border=2 align=\"center\"><tr><th>Cover</th><th>Title</th><th>Artist</th><th>Genre(s)</th><th>Year(s)</th><th>Details</th><th>Post to Facebook</th></tr>";
+	  
+	  	  html+="<div id='fb-root'></div>\n";
+      html+="<script src='http://connect.facebook.net/en_US/all.js'><\/script>\n";
+      html+="<p id='msg'></p>\n";
+	  
+	  html+="<script type=\"text/javascript\">\n";
+	  html+=" FB.init({appId: \"152774338224282\", status: true, cookie: true});\n";  
+      html+="function postToFeed(cover,title,name,genre,year,details) {\n";
+
+	 // html+="document.write(doc);\n";
+        // calling the API ...
+      html+="var obj = {\n";
+      html+="method: 'feed',\n";
+      html+="redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',\n";
+      html+="link: 'https://developers.facebook.com/docs/reference/dialogs/',\n";
+      html+="picture: cover,\n";
+      html+="name: title,\n";
+      html+="caption: 'I like '+title+' released in '+year,\n";
+      html+="description: 'Artist: '+name+' Genre: '+genre,\n";
+	  html+="properties: {'Look at details' :{ text: 'here', href: details}}";
+      html+="};\n";
+
+       html+="function callback(response) {\n";
+       html+="document.getElementById('msg').innerHTML = \"Post ID: \" + response['post_id'];\n";
+        html+="}\n";
+
+        html+="FB.ui(obj, callback);\n";
+      html+="}\n";
+    html+="<\/script>\n";
+	if(!doc.results.result[0])  //if there is only a single line!!
+    {
+        if(doc.results.result.cover=="N/A")
+		{
+		   html+="<tr align=\"center\"><td>N/A</td>";
+		}
+		else
+		{
+          html+="<tr align=\"center\"><td><img src=\""+doc.results.result.cover+"\"></td>";
+		 }
+        
+	    html+="<td>"+doc.results.result.name+"</td>";
+        html+="<td>"+doc.results.result.genre+"</td>";
+        html+="<td>"+doc.results.result.year+"</td>";
+		html+="<td><a href=\""+doc.results.result.details+"\">Details</a></td>";
+		html+="<td><a href onclick='postToFeed(\""+doc.results.result.cover+"\",\""+doc.results.result.name+"\",\""+doc.results.result.genre+"\",\""+doc.results.result.year+"\",\""+doc.results.result.details+"\"); return false;'><img src=\"http://www.wired.com/geekmom/wp-content/uploads/2013/01/facebook_logo.jpg\" height=\"50\" width=\"180\" /></a></td>\n";
+    } 
+   else
+   {
+	  for(i=0;i<doc.results.result.length;i++)
+	  {
+        if(doc.results.result[i].cover=="N/A")
+		{
+		   html+="<tr align=\"center\"><td>N/A</td>";
+		}
+		else
+		{
+          html+="<tr align=\"center\"><td><img src=\""+doc.results.result[i].cover+"\"></td>";
+		 }
+		 html+="<td>"+doc.results.result[i].title+"</td>"; 
+        html+="<td>"+doc.results.result[i].name+"</td>";
+        html+="<td>"+doc.results.result[i].genre+"</td>";
+        html+="<td>"+doc.results.result[i].year+"</td>";
+	    html+="<td><a href=\""+doc.results.result[i].details+"\">Details</a></td>";
+	    html+="<td><a href onclick='postToFeed(\""+doc.results.result[i].cover+"\",\""+doc.results.result[i].title+"\",\""+doc.results.result[i].name+"\",\""+doc.results.result[i].genre+"\",\""+doc.results.result[i].year+"\",\""+doc.results.result[i].details+"\"); return false;'><img src=\"http://www.wired.com/geekmom/wp-content/uploads/2013/01/facebook_logo.jpg\" height=\"50\" width=\"180\" /></a></td>\n";
+	  }
+	}
+  }
+	else if(type=="songs")
+	{
+	  html="<html><head></head><body><table border=2 align=\"center\"><tr><th>Sample</th><th>Title</th><th>Performer</th><th>Composer(s)</th><th>Details</th><th>Post to Facebook</th></tr>";
+	  
+	  html+="<div id='fb-root'></div>\n";
+      html+="<script src='http://connect.facebook.net/en_US/all.js'><\/script>\n";
+     // html+="<p><a onclick='postToFeed(); return false;'>Post to Feed</a></p>\n";
+      html+="<p id='msg'></p>\n";
+	  
+	  html+="<script type=\"text/javascript\">\n";
+	 // html+="\ndoc=\""+doc+"\";";
+	//  html+="doc=new Object();\n";
+	//  html+="\ndoc=\""+doc.results.result[0].title+"\";";
+	  html+=" FB.init({appId: \"152774338224282\", status: true, cookie: true});\n";	  
+      html+="function postToFeed(title,composer,performer,details) {\n";
+
+	 // html+="document.write(doc);\n";
+        // calling the API ...
+      html+="var obj = {\n";
+      html+="method: 'feed',\n";
+      html+="redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',\n";
+      html+="link: 'https://developers.facebook.com/docs/reference/dialogs/',\n";
+      html+="picture: 'http://fbrell.com/f8.jpg',\n";
+      html+="name: title,\n";
+      html+="caption: 'I like '+title+' composed by '+composer,\n";
+      html+="description: 'Performer: '+performer,\n";
+	  html+="properties: {'Look at details' :{ text: 'here', href: details}}";
+      html+="};\n";
+
+       html+="function callback(response) {\n";
+       html+="document.getElementById('msg').innerHTML = \"Post ID: \" + response['post_id'];\n";
+        html+="}\n";
+
+        html+="FB.ui(obj, callback);\n";
+      html+="}\n";
+    html+="<\/script>\n";
+	if(!doc.results.result[0])  //if there is only a single line!!
+    {
+        if(doc.results.result.cover=="N/A")
+		{
+		   html+="<tr align=\"center\"><td>N/A</td>";
+		}
+		else
+		{
+          html+="<tr align=\"center\"><td><img src=\""+doc.results.result.cover+"\"></td>";
+		 }
+        
+	    html+="<td>"+doc.results.result.name+"</td>";
+        html+="<td>"+doc.results.result.genre+"</td>";
+        html+="<td>"+doc.results.result.year+"</td>";
+		html+="<td><a href=\""+doc.results.result.details+"\">Details</a></td>";
+		html+="<td><a href onclick='postToFeed(\""+doc.results.result.cover+"\",\""+doc.results.result.name+"\",\""+doc.results.result.genre+"\",\""+doc.results.result.year+"\",\""+doc.results.result.details+"\"); return false;'><img src=\"http://www.wired.com/geekmom/wp-content/uploads/2013/01/facebook_logo.jpg\" height=\"50\" width=\"180\" /></a></td>\n";
+    } 
+   else   //more than one line of result
+   {
+	 for(i=0;i<doc.results.result.length;i++)
+	  {
+	   if(doc.results.result[i].sample=="N/A")
+		{
+		   html+="<tr align=\"center\"><td>N/A</td>\n";
+		}
+		else
+		{
+          html+="<tr align=\"center\"><td><a href=\""+doc.results.result[i].sample+"\">Play Sample</a></td>\n";
+		 }
+        
+        html+="<td>"+doc.results.result[i].title+"</td>\n";
+        html+="<td>"+doc.results.result[i].performer+"</td>\n";
+        html+="<td>"+doc.results.result[i].composer+"</td>\n";
+	    html+="<td><a href=\""+doc.results.result[i].details+"\">Details</a></td>\n";
+	   // html+="<td>Post to Facebook</td></tr>";
+	   html+="<td><a href onclick='postToFeed(\""+doc.results.result[i].title+"\",\""+doc.results.result[i].composer+"\",\""+doc.results.result[i].performer+"\",\""+doc.results.result[i].details+"\"); return false;'><img src=\"http://www.wired.com/geekmom/wp-content/uploads/2013/01/facebook_logo.jpg\" height=\"50\" width=\"180\" /></a></td>\n";//Post to Feed
+   
+	  }
+	 //  html+="<\/body><\/html>";
+	}
+  }
+	//alert(html);
+  //document.write(html);
+  
+  
+  }
+  document.getElementById("records").innerHTML=html;
+ }
+ else
+ {
+  // alert("not inside :(");
+ }
+ }
+
+function empty(f)
+{
+  if(f.query.value=="")
+  { //document.getElementById("records").innerHTML="<h1>WORKS</h1>";
+    alert("Please enter something in the search box"); 
+    return false;
+  }
+  else
+  {
+    //document.write(get
+     title=f.query.value;
+	 query1=title.split(' ').join('+');
+     type=f.type.value;
+	// alert(query1);
+     url="http://cs-server.usc.edu:28744/examples/servlet/HelloWorldExample?query="+query1+"&type="+type;
+	//url="http://cs-server.usc.edu:28744/examples/servlet/HelloWorldExample?query=adele&type=artists";
+	// alert(url);
+	req=false;
+   if (window.XMLHttpRequest)
+   {
+   
+     try
+	 {
+	   req = new XMLHttpRequest(); 
+	  }
+	  catch(e){req=false;}
+   }
+  else 
+  {// code for IE6, IE5
+   try
+   {
+    req=new ActiveXObject("Microsoft.XMLHTTP"); 
+	}
+	catch(e){req=false;}
+  }  
+ if(req)
+ {
+    req.open("GET", url, true); 
+	
+    req.onreadystatechange = myCode;
+    req.send(""); 
+	//document.write(doc);
+  }
+  }
+   
+  return true;
+}
+</script>
+</head>
+<body>
+<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    FB.init({
+      appId      : '152774338224282',                        // App ID from the app dashboard
+      channelUrl : '//http://cs-server.usc.edu:28744/examples/servlets/hw8.html/channel.html', // Channel file for x-domain comms
+      status     : true,                                 // Check Facebook Login status
+      xfbml      : true                                  // Look for social plugins on the page
+    });
+
+    // Additional initialization code such as adding Event Listeners goes here
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+ <div id='fb-root'></div>
+    <script src='http://connect.facebook.net/en_US/all.js'></script>
+    <p><a onclick='postToFeed(i,s,t,r,q,x); return false;'></a></p>
+    <p id='msg'></p>
+
+    <script type="text/javascript"> 
+	
+	//type1=myform.type.value;
+	//alert(type);
+	//if(type=="songs")
+	{
+      FB.init({appId: "152774338224282", status: true, cookie: true});
+
+      function postToFeed(title,composer,performer,details,det,link)
+	  {
+	    if(type=="artists")
+		{
+		  if(title=="N/A")
+		  {
+		    var obj =
+		    {
+              method: 'feed',
+        //  redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',
+              link: det,
+              picture: '',
+              name: composer,
+              caption: 'I like '+composer+' who is active since '+details,
+              description: 'Genre of Music: '+performer,
+		      properties: {'Look at details' :{ text: 'here', href: det}}
+            };
+		  }
+		  else
+		  {
+		   var obj =
+		{
+          method: 'feed',
+        //  redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',
+          link: det,
+          picture: title,
+          name: composer,
+          caption: 'I like '+composer+' who is active since '+details,
+          description: 'Genre of Music: '+performer,
+		  properties: {'Look at details' :{ text: 'here', href: det}}
+        };
+       }
+        function callback(response) 
+		{
+    //      document.getElementById('msg').innerHTML = "Post ID: " + response['post_id'];
+        }
+
+        FB.ui(obj, callback);
+		}
+		if(type=="albums")
+		{
+		   if(title=="N/A")
+		  {
+		    var obj =
+		    {
+				  method: 'feed',
+					//  redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',
+					  link: link,
+					  picture: '',
+					  name: composer,
+					  caption: 'I like '+composer+' released in '+det,
+					  description: 'Artist: '+performer+' Genre: '+details,
+					  properties: {'Look at details' :{ text: 'here', href: link}}
+            };
+		  }
+		  else
+		  {
+			   var obj =
+				{
+					  method: 'feed',
+					//  redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',
+					  link: link,
+					  picture: title,
+					  name: composer,
+					  caption: 'I like '+composer+' released in '+det,
+					  description: 'Artist: '+performer+' Genre: '+details,
+					  properties: {'Look at details' :{ text: 'here', href: link}}
+				};
+           }
+        function callback(response) 
+		{
+   //       document.getElementById('msg').innerHTML = "Post ID: " + response['post_id'];
+        }
+
+        FB.ui(obj, callback);
+		}
+        if(type=="songs")
+		{
+        // calling the API ...
+        var obj =
+		{
+          method: 'feed',
+       //   redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',
+          link: details,
+          picture: '', //http://fbrell.com/f8.jpg
+          name: title,
+          caption: 'I like '+title+' composed by '+composer,
+          description: 'Performer: '+performer,
+		  properties: {'Look at details' :{ text: 'here', href: details}}
+        };
+
+        function callback(response) 
+		{
+    //      document.getElementById('msg').innerHTML = "Post ID: " + response['post_id'];
+        }
+
+        FB.ui(obj, callback);
+      }
+	  }
+    }
+    </script>
+
+
+<div id="tab" align="center">
+<br><br>
+<h1>Discography Search</h1><br>
+<form name="myform" method="GET" id="location"><!--action="../servlet/HelloWorldExample" "> <!--../servlet/HelloWorldExample -->
+Search: <input type="text" name="query" maxlength="50" size="30"  />
+<br>
+Type: <select name="type">
+         <option value="artists">Artists</option>
+		 <option value="albums">Albums</option>
+		 <option value="songs">Songs</option>
+	  <select><br><br>
+<input type="button" name="submit" value="Submit" onClick="empty(myform)" /><br>
+</form>
+<p id="records" align="center"></p>
+</div>
+</body>
+</html>

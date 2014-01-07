@@ -1,0 +1,31 @@
+<html>
+<meta charset="UTF-8">
+<head>
+<script type="text/javascript">
+function empty(f)
+{
+  if(f.query.value=="")
+  {
+    alert("Please enter something in the search box"); 
+    return false;
+  }
+}
+</script>
+</head>
+<body>
+<div align="center">
+<br><br>
+<h1>Discography Search</h1><br>
+<form name="myform" method="POST" id="location" action="hw6php.php" ">
+Search: <input type="text" name="query" maxlength="50" size="30"  />
+<br>
+Type: <select name="type">
+         <option value="artists">Artists</option>
+		 <option value="albums">Albums</option>
+		 <option value="songs">Songs</option>
+	  <select><br><br>
+<input type="submit" name="submit" value="Submit" onClick="return empty(myform)" /><br>
+</form>
+</div>
+</body>
+</html>

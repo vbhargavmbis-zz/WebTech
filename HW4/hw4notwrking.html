@@ -1,0 +1,36 @@
+<html>
+<script type="text/javascript">
+var xmlDoc;
+
+function loadXML(url) 
+{
+   if (window.XMLHttpRequest)
+   {
+       xmlhttp=new XMLHttpRequest();
+   }
+   xmlhttp.open("GET",url,false); //open, send, responseXML are
+   xmlhttp.send();                //properties of XMLHTTPRequest
+   xmlDoc=xmlhttp.responseXML;
+   alert (xmlhttp.status);
+   return xmlDoc;
+
+ }
+
+function xmlparse() 
+{
+   var html = "";
+   xmlDoc = loadXML("http://www-scf.usc.edu/~csci571/2013Spring/hw4/nutrition.xml");
+   html += ("xmlDoc is loaded, ready for use<br />");
+   document.getElementById("show").innerHTML = "Loaded";
+   var bookstore = xmlDoc.documentElement;
+  // for (i=0;i< bookstore.childNodes.length ;i++)
+}
+</script>
+<head>
+<body>
+<div id="show" align="center">Enter URL for Nutrition XML file</div>
+<div align="center"><input type="textbox"></div>
+<div align="center"><input type="button" value="Submit Query" onClick="loadXML(nutrition.xml)"></div>
+</body>
+</head>
+</html>

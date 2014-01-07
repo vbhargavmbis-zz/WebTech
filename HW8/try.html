@@ -1,0 +1,26 @@
+<html><head></head><body><table border=2 align="center"><tr><th>Cover</th><th>Name</th><th>Genre(s)</th><th>Year(s)</th><th>Details</th><th>Post to Facebook</th></tr><div id='fb-root'></div>
+<script src='http://connect.facebook.net/en_US/all.js'></script>
+<p id='msg'></p>
+<script type="text/javascript">
+window.fbAsyncInit = function() { FB.init({appId      : '152774338224282',status     : true,xfbml      : true});};(function(d, s, id){ var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) {return;}js = d.createElement(s); js.id = id;js.src = "//connect.facebook.net/en_US/all.js";fjs.parentNode.insertBefore(js, fjs);}(document, 'script', 'facebook-jssdk')); FB.init({appId: "152774338224282", status: true, cookie: true});
+function postToFeed(cover,name,genre,year,details) {
+var obj = {
+method: 'feed',
+redirect_uri: 'http://cs-server.usc.edu:28744/examples/servlets/hw8.html',
+link: 'https://developers.facebook.com/docs/reference/dialogs/',
+picture: cover,
+name: name,
+caption: 'I like '+name+' who is active since '+year,
+description: 'Genre of Music: '+genre,
+properties: {'Look at details' :{ text: 'here', href: details}}};
+function callback(response) {
+document.getElementById('msg').innerHTML = "Post ID: " + response['post_id'];
+}
+FB.ui(obj, callback);
+}
+</script>
+<tr align="center"><td><img src="http://cps-static.rovicorp.com/3/JPG_170/MI0003/092/MI0003092113.jpg?partner=allrovi.com"></td><td>Adele</td><td>                                    Pop/Rock, R&B                                            </td><td>                                                    2000s - 2010s                            </td><td><a href="http://www.allmusic.com/artist/adele-mn0000503460">Details</a></td><td><a href onclick='postToFeed("http://cps-static.rovicorp.com/3/JPG_170/MI0003/092/MI0003092113.jpg?partner=allrovi.com","Adele","                                    Pop/Rock, R&B                                            ","                                                    2000s - 2010s                            ","http://www.allmusic.com/artist/adele-mn0000503460"); return false;'>Post to Feed</a></td>
+<tr align="center"><td><img src="http://cps-static.rovicorp.com/3/JPG_170/MI0003/208/MI0003208257.jpg?partner=allrovi.com"></td><td>Adele Anthony</td><td>                                    Classical                                            </td><td>                                                    1990s - 2010s                            </td><td><a href="http://www.allmusic.com/artist/adele-anthony-mn0000059205">Details</a></td><td><a href onclick='postToFeed("http://cps-static.rovicorp.com/3/JPG_170/MI0003/208/MI0003208257.jpg?partner=allrovi.com","Adele Anthony","                                    Classical                                            ","                                                    1990s - 2010s                            ","http://www.allmusic.com/artist/adele-anthony-mn0000059205"); return false;'>Post to Feed</a></td>
+<tr align="center"><td>N/A</td><td>Adele & Glenn</td><td>                                    Pop/Rock                                            </td><td>                                                    2010s                            </td><td><a href="http://www.allmusic.com/artist/adele-amp-glenn-mn0002943666">Details</a></td><td><a href onclick='postToFeed("N/A","Adele & Glenn","                                    Pop/Rock                                            ","                                                    2010s                            ","http://www.allmusic.com/artist/adele-amp-glenn-mn0002943666"); return false;'>Post to Feed</a></td>
+<tr align="center"><td>N/A</td><td>Adele Kozak</td><td>                                    Classical                                            </td><td>                                                    2010s                            </td><td><a href="http://www.allmusic.com/artist/adele-kozak-mn0002794488">Details</a></td><td><a href onclick='postToFeed("N/A","Adele Kozak","                                    Classical                                            ","                                                    2010s                            ","http://www.allmusic.com/artist/adele-kozak-mn0002794488"); return false;'>Post to Feed</a></td>
+<tr align="center"><td>N/A</td><td>Adele Schmidt</td><td>                                    Stage & Screen                                            </td><td>                                                    2010s                            </td><td><a href="http://www.allmusic.com/artist/adele-schmidt-mn0002977946">Details</a></td><td><a href onclick='postToFeed("N/A","Adele Schmidt","                                    Stage & Screen                                            ","                                                    2010s                            ","http://www.allmusic.com/artist/adele-schmidt-mn0002977946"); return false;'>Post to Feed</a></td>

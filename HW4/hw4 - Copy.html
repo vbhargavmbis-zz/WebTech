@@ -1,0 +1,222 @@
+
+<html>
+<head>
+<script type="text/javascript">
+
+function loadXML(url) 
+{
+   if (window.XMLHttpRequest)
+   {// code for IE7+, Firefox, Chrome, Opera, Safari
+       xmlhttp=new XMLHttpRequest(); 
+	  
+   }
+  else 
+  {// code for IE6, IE5
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); 
+  }
+  xmlhttp.open("GET",url,false);
+  xmlhttp.send(null);
+  xmlDoc=xmlhttp.responseXML;
+  if(xmlDoc==null)
+  alert("XML file does not exist");
+  return xmlDoc;
+}
+
+function generateHTML(xmlDoc)
+   {
+      
+	  ELEMENT_NODE = 1;    // MS parser doesn't define Node.ELEMENT_NODE
+      root=xmlDoc.DocumentElement;
+      html_text="<html><head><title>XML Parse Result</title></head><body>";
+      html_text+="<table border='2'>";
+	 
+	  daily=xmlDoc.getElementsByTagName("daily-values");
+	  dailyNodeList=daily.item(0).childNodes;
+      food=xmlDoc.getElementsByTagName("food");
+	  if(food.length<1)
+	  {
+	    alert("No food in XML file");
+	  }
+	//  else
+	  {
+	  foodNodeList=food.item(0).childNodes;
+      html_text+="<tbody>";
+      html_text+="<th colspan=\"18\">Daily Values</th><tr>";
+	  for(i=0;i<dailyNodeList.length;i++)
+      {
+	     if(foodNodeList.item(i).nodeType==ELEMENT_NODE)
+          {
+		     header=dailyNodeList.item(i).nodeName;
+		     html_text+="<th>"+header+"</th>"; 
+			// html_text+="<th>"+getvalue+"</th>"; 
+			getunits=dailyNodeList.item(i).getAttribute('units');
+			html_text+="<th>"+dailyNodeList.item(i).firstChild.nodeValue+getunits+"</th>";
+		  }
+	  }
+	  var ctr=0;
+	  var chk;
+	  var chkc;
+	  html_text+="<tr>";
+	  html_text+="<th colspan=\"18\">Nutrition Categories</th><tr>";
+      x=0;  y=0;
+	  chk=foodNodeList;
+	  for(i=0;i<foodNodeList.length;i++)
+      {
+    	  if(foodNodeList.item(i).nodeType==ELEMENT_NODE)
+          {
+		    header=foodNodeList.item(i).nodeName;
+			if((header=="vitamins")||(header=="minerals"))
+			{  
+			  minvitHeader=foodNodeList.item(i).childNodes;
+				 for(l=0;l<minvitHeader.length;l++)
+                 {
+		    //alert(foodNodeList.length);
+		             if(foodNodeList.item(l).nodeType==ELEMENT_NODE)
+                     {
+					   // alert(minvitHeader.item(l).nodeName);
+					   header=foodNodeList.item(i).nodeName+"-"+minvitHeader.item(l).nodeName;
+					   html_text+="<th>"+header+"</th>";  
+					   ctr=1;
+					 }
+				 }
+			}
+            
+			
+			if(ctr==0)
+               html_text+="<th>"+header+"</th>";  
+		  ctr=0;
+		  }
+	  }
+	  html_text+="</tr>";
+      html_text+="<th colspan=\"18\">Food</th><tr>";
+	  
+	  for(i=0;i<food.length;i++) //do for all food
+      {
+  	     foodNodeList=food.item(i).childNodes;
+		// alert(foodNodeList.length);
+         html_text+="<tr>";      //start a new row of the output table
+         for(j=0;j<foodNodeList.length;j++)
+         {
+		    //alert(foodNodeList.length);
+			
+		    if(foodNodeList.item(j).nodeType==ELEMENT_NODE)
+            {
+			  
+			  if((foodNodeList.item(j).nodeName=="minerals")||(foodNodeList.item(j).nodeName=="vitamins"))
+			  {
+			     minvitNodeList=foodNodeList.item(j).childNodes;
+				 for(l=0;l<minvitNodeList.length;l++)
+                 {
+		   
+		             if(foodNodeList.item(l).nodeType==ELEMENT_NODE)
+                     {
+					   
+					   html_text+="<td>"+minvitNodeList.item(l).firstChild.nodeValue+"</td>";
+					  
+					 }
+					 
+				 }
+			  }
+			   else if((foodNodeList.item(j).nodeName!="serving")&&(foodNodeList.item(j).nodeName!="calories")&&(foodNodeList.item(j).nodeName!="photo")&&(foodNodeList.item(j).nodeName!="minerals"))
+              {
+			    //if(foodNodeList.item(j).nodeName!="calories")
+                 html_text+="<td>"+foodNodeList.item(j).firstChild.nodeValue+"</td>";
+              }
+			 
+			  else if((foodNodeList.item(j).nodeName=="serving"))//&&(foodNodeList.item(j).nodeName!="calories")&&(foodNodeList.item(j).nodeName!="photo"))
+              {			      
+			    getunits=foodNodeList.item(j).getAttribute('units');
+				html_text+="<td>"+foodNodeList.item(j).firstChild.nodeValue+getunits+"</td>";
+			  }
+			  
+			  else if((foodNodeList.item(j).nodeName=="calories"))//&&(foodNodeList.item(j).nodeName!="calories")&&(foodNodeList.item(j).nodeName!="photo"))
+              {			      
+			    gettotal=foodNodeList.item(j).getAttribute('total');
+				getfat=foodNodeList.item(j).getAttribute('fat');
+				html_text+="<td>"+gettotal+" total, "+getfat+" fat"+"</td>";
+			  }
+			  
+               else if(foodNodeList.item(j).nodeName=="photo")
+               {
+				html_text+="<td><img src=\"http://www-scf.usc.edu/~csci571/2013Spring/hw4/"+foodNodeList.item(j).firstChild.nodeValue+"\" width = \"150\" height = \"150\" ></td>";
+			   }	
+               else if(foodNodeList.item(j).nodeName==null)
+                {
+				  html_text+="<td>N/A</td>";
+			     }
+		    }    
+	     }
+               html_text+="</tr>";  
+	   }	   
+			   
+	  html_text+="</table>";
+      html_text+="</bo dy></html>";  
+	 }
+   }
+function viewXML(what)
+{
+
+  var URL = what.URL.value;
+  if(what.URL.value=="")
+  {
+     alert("Enter the URL");
+  }
+  else
+  {
+  
+  xmlDoc = loadXML(URL);
+  //if(xmlDoc==NULL)
+  //alert("XML File not Fount");
+  if (window.ActiveXObject) //if IE, simply execute script (due to async prop).
+  {  
+    if (xmlDoc.parseError.errorCode != 0)
+	{
+	 alert("invalid");
+      var myErr = xmlDoc.parseError;
+      generateError(xmlDoc);
+      hWin = window.open("", "Error", "height=300,width=340, scrollbars=1");
+      hWin.document.write(html_text);
+    }
+	else 
+	{
+     	generateHTML(xmlDoc);
+        hWin = window.open("", "Assignment4", "height=800,width=600, scrollbars=1");
+        hWin.document.write(html_text);
+	}
+  } 
+  else 
+  {
+  
+    if (xmlDoc.documentElement.nodeName=="parsererror")
+    {
+	  errStr=xmlDoc.documentElement.childNodes[0].nodeValue;
+errStr=errStr.replace(/</g, "&lt;");
+//document.write(errStr);
+alert("Error in XML file");
+	}
+	else
+  //else if FF, execute script once XML object has loaded
+    {//alert(what.URL.value);
+     xmlDoc.onload=generateHTML(xmlDoc);
+     hWin = window.open("", "Assignment4", "height=800,width=600, scrollbars=1");
+     hWin.document.write(html_text);
+    }
+  }
+     hWin.document.close(); 
+ }
+}
+</script>
+<title>Homework 4</title>
+</script>
+</head>
+<body>
+<form name="myform" method="POST" id="location">
+<div align="center">Enter URL for Nutrition XML File<br>
+<input type="text" name="URL" maxlength="80" size="50"  />
+<br />
+<input type="button" name="submit" value="Submit Query" onClick="viewXML(this.form)" />
+</form>
+<noscript>
+</body>
+
+</html>
